@@ -1,3 +1,6 @@
 from Brain import Brain
-server = Brain()
-server.run_server()
+
+
+if __name__ == '__main__':
+    server = Brain()
+    server.run_server()

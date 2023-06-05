@@ -1,7 +1,7 @@
 import cv2
 import torch
 import numpy as np
-from model import Net
+
 
 class Recognizer:
     """
@@ -30,7 +30,7 @@ class Recognizer:
                       '10': 'K', '11': 'L', '12': 'M', '13': 'N', '14': 'O', '15': 'P', '16': 'Q', '17': 'R',
                       '18': 'S', '19': 'T', '20': 'U', '21': 'V', '22': 'W', '23': 'X', '24': 'Y' }
 
-    def is_correct(self, path_img: str, letter: str):
+    def is_correct(self, img_path: str, letter: str):
         """
         Performs image recognition and checks if the recognized letter matches the expected letter.
 
@@ -44,11 +44,11 @@ class Recognizer:
         Returns:
         - bool: True if the recognized letter matches the expected letter, False otherwise.
         """
-        if letter == self._process_frame(path_img):
-            return True
-        return False
+        return letter == self._process_frame(img_path)
 
-    def _process_frame(self, img: None):
+    # def _base64_to_cv2image():
+
+    def _process_frame(self, img_path: str):
         """
         Processes the image for recognition.
 
@@ -65,7 +65,7 @@ class Recognizer:
         This is a method and should not be called directly from outside the class.
 
         """
-        img = cv2.imread(img)
+        img = cv2.imread(img_path)
 
         res = cv2.resize(img, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
         res = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
@@ -82,4 +82,4 @@ class Recognizer:
         # if float(probs[0, 0]) < 0.4:
         #     return 'Sign not detected'
         # else:
-        return self.signs[str(int(pred))]
+        return self.signs.get(str(int(pred)))

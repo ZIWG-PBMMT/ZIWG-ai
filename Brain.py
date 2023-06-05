@@ -30,7 +30,7 @@ class Brain:
         self.path_img = 'compare.jpg'
         self.recognizer = Recognizer()
         
-        @self.app.route("/validate", methods = ['POST', 'GET'])
+        @self.app.route("/validate", methods=['POST', 'GET'])
         def validate_request():
             """
             Handles the request to validate the user's photo against a given letter.
@@ -52,18 +52,12 @@ class Brain:
             self.photo = request.get_json()['user_photo']
             self.letter = request.get_json()['letter']
             self._save_received_img(self.photo)
-            if self.recognizer.is_correct(self.path_img, self.letter):
-                response = True
-            else:
-                response = False
+            response = self.recognizer.is_correct(self.path_img, self.letter)
             # print(response)
-            requests.post('http://127.0.0.1:5050/receive', json = {'recognition': response})
-            try:
-                os.remove('compare.jpg')
-            except OSError:
-                pass
-            return str(response)
-
+            # requests.post('http://127.0.0.1:5050/receive', json={'recognition': response})
+            # TODO - second endpoint in this api to GET "response". Store responses (results) in directory,
+            #  make it async and compatible with Gesture obj pickle
+            return {'is_correct': response}
 
     def _save_received_img(self, photo):
         """
@@ -76,7 +70,7 @@ class Brain:
         - photo (str): String representation of the received image.
         """
         photo_data = base64.b64decode(photo)
-        with open("compare.jpg", "wb") as file:
+        with open(f"{hash(photo)}.jpg", "wb") as file:
             file.write(photo_data)
     
     def run_server(self):
